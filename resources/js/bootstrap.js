@@ -34,6 +34,6 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 // });
 import {createApp} from 'vue'
 
-import App from './App.vue'
+import App from './pages/Home.vue'
 
 createApp(App).mount("#app")
