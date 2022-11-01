@@ -1,6 +1,6 @@
 <template>
     <div
-        class="rounded-md py-4 max-w-sm w-full mx-auto"
+        class="rounded-md py-4 max-w-sm w-full"
     >
         <div class="animate-pulse flex space-x-4">
             <div class="bg-slate-200 h-5 w-5"></div>

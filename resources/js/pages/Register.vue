@@ -62,12 +62,12 @@
                 >
                     Register
                 </button>
-                <a
+                <router-link
                     class="inline-block align-baseline font-bold text-sm text-blue hover:text-blue-darker"
-                    href="#"
+                    to="/"
                 >
-                    Forgot Password?
-                </a>
+                    Login
+                </router-link>
             </div>
             </form>
         </div>
