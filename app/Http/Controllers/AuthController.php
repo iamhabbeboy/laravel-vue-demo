@@ -41,10 +41,10 @@ class AuthController extends Controller
                 'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
 
-        } catch (\Throwable $th) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
-                'message' => $th->getMessage()
+                'message' => $e->getMessage()
             ], 500);
         }
     }
@@ -82,10 +82,10 @@ class AuthController extends Controller
                 'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
 
-        } catch (\Throwable $th) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
-                'message' => $th->getMessage()
+                'message' => $e->getMessage()
             ], 500);
         }
     }

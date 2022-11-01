@@ -1,4 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router';
+
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -8,17 +9,17 @@ const router = createRouter({
         },
         {
             path: '/register',
-            component:() => import('./pages/Register.vue')
+            component: () => import('./pages/Register.vue')
         },
         {
             path: '/home',
-            component:() => import('./pages/Home.vue')
+            component: () => import('./pages/Home.vue')
         }
     ],
 })
 router.beforeEach((to, from, next) => {
     if (to.path !== '/' && to.path !== '/register' && !isAuthenticated()) {
-        return next({ path: '/' })
+        return next({path: '/'})
     }
     return next()
 })

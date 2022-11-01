@@ -16,6 +16,7 @@ class TodoController extends Controller
     public function index(): \Illuminate\Http\JsonResponse
     {
         $user = Auth()->user();
+        sleep(3);
         $data = Todo::query()->where('user_id', $user->id)->get();
         return response()->json(['status' => true, 'data' => $data]);
     }
