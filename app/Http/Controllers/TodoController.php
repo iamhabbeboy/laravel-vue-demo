@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TodoController extends Controller
 {
@@ -15,7 +16,6 @@ class TodoController extends Controller
     public function index(): \Illuminate\Http\JsonResponse
     {
         $user = Auth()->user();
-        sleep(2);
         $data = Todo::query()->where('user_id', $user->id)->get();
         return response()->json(['status' => true, 'data' => $data]);
     }
@@ -33,14 +33,13 @@ class TodoController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        sleep(2);
         $data = Todo::where('user_id', $request->user()->id)->where('title', $request->title);
-        if($data->first()) {
+        if ($data->first()) {
             return response()->json(['status' => false, 'message' => 'Already exist']);
         }
         $req = $request->all();
@@ -52,7 +51,7 @@ class TodoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function show($id): \Illuminate\Http\JsonResponse
@@ -64,7 +63,7 @@ class TodoController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -75,23 +74,42 @@ class TodoController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): \Illuminate\Http\JsonResponse
     {
-        //
+        $validateUser = Validator::make($request->all(),
+            [
+                'has_completed' => 'required',
+            ]);
+
+        if ($validateUser->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'validation error',
+                'errors' => $validateUser->errors()
+            ], 401);
+        }
+
+        $data = Todo::find($id);
+        $data->has_completed = $request->has_completed;
+        $data->update();
+        return response()->json(['status' => true, 'data' => $data], 202);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Throwable
      */
-    public function destroy($id)
+    public function destroy(int $id): \Illuminate\Http\JsonResponse
     {
-        //
+        throw_if(!$id, 'todo Id is missing');
+        Todo::findOrFail($id)->delete();
+        return response()->json(['status' => true, 'message' => 'todo deleted']);
     }
 }

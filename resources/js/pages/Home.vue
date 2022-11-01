@@ -8,14 +8,14 @@
         </div>
         <input type="text" class="p-2 w-64 border rounded-md" v-model="todo" placeholder="Enter your todo"/>
         <button class="bg-blue-600 text-white px-5 py-2 rounded-md ml-2 hover:bg-blue-400" @click="addTodo">Add</button>
-        <Loader v-if="isLoading" />
+        <Loader v-if="isLoading"/>
         <ul class="border-t mt-3 cursor-pointer">
-            <li :class="`py-3 border-b text-gray-600 ${val.completed ? 'line-through' : ''}`"
+            <li :class="`py-3 border-b text-gray-600 ${val.has_completed ? 'line-through' : ''}`"
                 v-for="(val, idx) in todos" :key="idx">
-                <input type="checkbox" :checked="val.completed" @click="checked(idx)"/>
-                <span @click="checked(idx)" class="pl-3">{{ val.title }} </span>
+                <input type="checkbox" :checked="val.has_completed" @click="checked(idx)"/>
+                <span @click="checked(val, idx)" class="pl-3">{{ val.title }} </span>
                 <button class="float-right bg-red-400 px-2 text-white font-bold rounded-md hover:bg-red-600"
-                        @click="deleteTodo(idx)">&times;
+                        @click="deleteTodo(val, idx)">&times;
                 </button>
             </li>
         </ul>
@@ -26,6 +26,7 @@ import {ref, onMounted} from 'vue'
 import {useRouter} from "vue-router";
 import {request} from '../helper'
 import Loader from '../components/Loader.vue';
+
 export default {
     components: {
         Loader,
@@ -66,7 +67,7 @@ export default {
             try {
                 const data = {title: title}
                 const req = await request('post', '/api/todos', data)
-                if(req.data.message) {
+                if (req.data.message) {
                     isLoading.value = false
                     return alert(req.data.message)
                 }
@@ -91,15 +92,34 @@ export default {
             todo.value = ""
         }
 
-        const checked = (index) => {
-            if (!todos.value[index]) {
-                return alert("Error occured")
+        const checked = async (val, index) => {
+            try {
+                const data = {has_completed: !val.has_completed}
+                const req = await request('put', `/api/todos/${val.id}`, data)
+                if (req.data.message) {
+                    isLoading.value = false
+                    return alert(req.data.message)
+                }
+                todos.value[index].has_completed = !val.has_completed
+            } catch (e) {
+                await router.push('/')
             }
-            todos.value[index].completed = !todos.value[index].completed
+            isLoading.value = false
         }
 
-        const deleteTodo = (index) => {
-            alert(index)
+        const deleteTodo = async (val, index) => {
+            if (window.confirm("Are you sure")) {
+                try {
+                    const req = await request('delete', `/api/todos/${val.id}`)
+                    if (req.data.message) {
+                        isLoading.value = false
+                        todos.value.splice(index, 1)
+                    }
+                } catch (e) {
+                    await router.push('/')
+                }
+                isLoading.value = false
+            }
         }
 
         return {

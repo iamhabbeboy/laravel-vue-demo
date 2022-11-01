@@ -16,6 +16,12 @@ export const request = async (method, url, data) => {
             case 'post':
                 response = await axios.post(url, data, headers)
                 break;
+            case 'put':
+                response = await axios.put(url, data, headers)
+                break;
+            case 'delete':
+                response = await axios.delete(url, headers)
+                break;
             default:
                 break;
         }
