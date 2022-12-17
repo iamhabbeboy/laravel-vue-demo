@@ -12,7 +12,7 @@
         <ul class="border-t mt-3 cursor-pointer">
             <li :class="`py-3 border-b text-gray-600 ${val.has_completed ? 'line-through' : ''}`"
                 v-for="(val, idx) in todos" :key="idx">
-                <input type="checkbox" :checked="val.has_completed" @click="checked(idx)"/>
+                <input type="checkbox" :checked="val.has_completed" @click="checked(val, idx)"/>
                 <span @click="checked(val, idx)" class="pl-3">{{ val.title }} </span>
                 <button class="float-right bg-red-400 px-2 text-white font-bold rounded-md hover:bg-red-600"
                         @click="deleteTodo(val, idx)">&times;
